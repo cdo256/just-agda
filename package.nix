@@ -5,15 +5,19 @@
   ...
 }:
 let
+  agda = pkgs.agda.withPackages (ps: [ ps.standard-library ]);
   init-file = pkgs.stdenv.mkDerivation {
     name = "init.el";
-    src = replaceVars ./init.el { };
+    src = replaceVars ./init.el {
+      inherit agda;
+    };
     phases = [ "installPhase" ];
     installPhase = ''
       cp $src $out
     '';
   };
   emacs = (emacsPackagesFor pkgs.emacs).emacsWithPackages (epkgs: [
+    epkgs.agda2-mode
     epkgs.all-the-icons
     epkgs.all-the-icons-dired
     epkgs.command-log-mode
@@ -57,9 +61,6 @@ pkgs.symlinkJoin {
   name = "just-agda";
   paths = [
     emacs
-    (pkgs.agda.withPackages (ps: [
-      ps.standard-library
-    ]))
     wrapped
   ];
   buildInputs = [ ];

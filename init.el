@@ -610,5 +610,8 @@
   (evil-collection-define-key 'normal 'dired-mode-map
     "H" 'dired-hide-dotfiles-mode))
 
+(use-package agda2-mode)
+(setq agda2-program-name "@agda@/bin/agda")
+
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 2 1000 1000))
