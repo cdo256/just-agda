@@ -21,10 +21,10 @@ let
     epkgs.company-box
     epkgs.counsel
     epkgs.counsel-projectile
-    epkgs.dired
+    #epkgs.dired
     epkgs.dired-hide-dotfiles
     epkgs.dired-open
-    epkgs.dired-single
+    #epkgs.dired-single
     epkgs.doom-modeline
     epkgs.doom-themes
     epkgs.evil
