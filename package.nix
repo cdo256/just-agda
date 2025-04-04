@@ -62,6 +62,7 @@ pkgs.symlinkJoin {
   paths = [
     emacs
     wrapped
+    agda
   ];
-  buildInputs = [ ];
+  buildInputs = [ agda ];
 }
