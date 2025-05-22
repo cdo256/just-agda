@@ -593,6 +593,53 @@
 ;(use-package dired-single
 ;  :commands (dired dired-jump))
 
+(with-eval-after-load 'agda2-mode
+  (evil-define-key 'normal agda2-mode-map
+
+    ","  nil ; '(:ignore t :which-key "Agda")
+    ",l" 'agda2-load
+    ",f" 'agda2-next-goal
+    ",b" 'agda2-previous-goal
+    ",r" 'agda2-refine
+    ",t" 'agda2-goal-type
+    ",e" 'agda2-show-context
+    ",a" 'agda2-mimer-maybe-all
+    ",h" 'agda2-helper-function-type
+    ",d" 'agda2-infer-type-maybe-toplevel
+    ",w" 'agda2-why-in-scope-maybe-toplevel
+    ",n" 'agda2-compute-normalised-maybe-toplevel
+    ",o" 'agda2-module-contents-maybe-toplevel
+
+    ",C" 'agda2-compile
+    ",Q" 'agda2-quit
+    ",R" 'agda2-restart
+    ",A" 'agda2-abort
+    ",D" 'agda2-remove-annotations
+    ",H" 'agda2-display-implicit-arguments
+
+    ",s"   'agda2-solve-maybe-all
+    ",c"   'agda2-make-case
+    ", "   'agda2-give
+    ",m"   'agda2-elaborate-give
+    ",z"   'agda2-search-about-toplevel
+    ",;"   'agda2-comment-dwim-rest-of-buffer
+
+    "M-." 'agda2-goto-definition-keyboard
+    "M-," 'agda2-go-back))
+
+;; Preserve TAB indentation
+(with-eval-after-load 'agda2-mode
+  (define-key agda2-mode-map (kbd "TAB") 'eri-indent))
+
+
+;; Enable Agda input method in insert mode
+;(add-hook 'evil-insert-state-entry-hook
+;          (lambda () (when (derived-mode-p 'agda2-mode)
+;                      (set-input-method "Agda"))))
+;(add-hook 'evil-insert-state-exit-hook
+;          (lambda () (set-input-method nil)))
+
+
 (use-package all-the-icons-dired
   :hook (dired-mode . all-the-icons-dired-mode))
 
