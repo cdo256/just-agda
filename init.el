@@ -99,6 +99,7 @@
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
+(general-auto-unbind-keys)
 (use-package general
   :after evil
   :config
@@ -108,9 +109,25 @@
     :global-prefix "C-SPC")
 
   (efs/leader-keys
-    "t"  '(:ignore t :which-key "toggles")
-    "tt" '(counsel-load-theme :which-key "choose theme")
-    "fde" '(lambda () (interactive) (find-file (expand-file-name "~/.emacs.d/Emacs.org")))))
+    "f"    '(:ignore t :which-key "file")
+    "b"    '(:ignore t :which-key "buffer")
+    "t"    '(:ignore t :which-key "toggles")
+    " "    'counsel-M-x
+    "/s"   'counsel-rg
+    "tt"   '(counsel-load-theme :which-key "choose theme")
+    "<f1>" 'counsel-apropos
+    "bb"   'ivy-switch-buffer
+    "ff"   'counsel-find-file
+    "fF"   'counsel-find-file
+    "fL"   'counsel-locate
+    "fr"   'counsel-recentf
+    "hda"  'counsel-apropos
+    "hi"   'counsel-info-lookup-symbol
+    "hr"   'counsel-register
+    "iu"   'counsel-unicode-char
+    "ym"   'counsel-mark-ring
+    "yy"   'counsel-yank-pop
+    ))
 
 (use-package evil
   :init
