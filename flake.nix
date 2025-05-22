@@ -3,19 +3,21 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    flake-parts.url = "github:hercules-ci/flake-parts";
   };
 
   outputs =
-    { self, nixpkgs }:
-    let
+    inputs:
+    inputs.flake-parts.lib.mkFlake { inherit inputs; } (top: {
       systems = [
         "x86_64-linux"
       ];
-      forAllSystems = fn: nixpkgs.lib.genAttrs systems (system: fn nixpkgs.legacyPackages.${system});
-    in
-    {
-      packages = forAllSystems (pkgs: {
-        default = pkgs.callPackage ./package.nix { };
-      });
-    };
+      perSystem =
+        { pkgs, ... }:
+        {
+          packages = {
+            default = pkgs.callPackage ./package.nix { };
+          };
+        };
+    });
 }
