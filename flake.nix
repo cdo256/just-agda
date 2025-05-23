@@ -8,15 +8,23 @@
 
   outputs =
     inputs:
-    inputs.flake-parts.lib.mkFlake { inherit inputs; } (top: {
+    let
+      inherit (inputs) self flake-parts;
+      inherit (self.lib) makeOverridable;
+    in
+    flake-parts.lib.mkFlake { inherit inputs; } (top: {
       systems = [
         "x86_64-linux"
+      ];
+      imports = [
+        ./lib.nix
       ];
       perSystem =
         { pkgs, ... }:
         {
-          packages = {
-            default = pkgs.callPackage ./package.nix { };
+          packages = rec {
+            just-agda = makeOverridable (import ./package.nix) { inherit pkgs; };
+            default = just-agda;
           };
         };
     });

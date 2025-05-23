@@ -1,11 +1,14 @@
 {
   pkgs,
-  replaceVars,
-  emacsPackagesFor,
+  agda ? (
+    pkgs.agda.withPackages (ps: [
+      ps.standard-library
+    ])
+  ),
   ...
 }:
 let
-  agda = pkgs.agda.withPackages (ps: [ ps.standard-library ]);
+  inherit (pkgs) replaceVars emacsPackagesFor;
   init-file = pkgs.stdenv.mkDerivation {
     name = "init.el";
     src = replaceVars ./init.el {
