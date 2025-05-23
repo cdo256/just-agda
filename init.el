@@ -626,6 +626,7 @@
     ",w" 'agda2-why-in-scope-maybe-toplevel
     ",n" 'agda2-compute-normalised-maybe-toplevel
     ",o" 'agda2-module-contents-maybe-toplevel
+    ",c" 'agda2-make-case
 
     ",C" 'agda2-compile
     ",Q" 'agda2-quit
@@ -634,12 +635,16 @@
     ",D" 'agda2-remove-annotations
     ",H" 'agda2-display-implicit-arguments
 
-    ",s"   'agda2-solve-maybe-all
-    ",c"   'agda2-make-case
-    ", "   'agda2-give
-    ",m"   'agda2-elaborate-give
-    ",z"   'agda2-search-about-toplevel
-    ",;"   'agda2-comment-dwim-rest-of-buffer
+    ",s" 'agda2-solve-maybe-all
+    ", " 'agda2-give
+    ",," 'agda2-goal-and-context
+    ",." 'agda2-goal-and-context-and-inferred
+    ",;" 'agda2-goal-and-context-and-checked
+    ",=" 'agda2-show-constraints
+    ",?" 'agda2-show-goals
+    ",m" 'agda2-elaborate-give
+    ",z" 'agda2-search-about-toplevel
+    ",;" 'agda2-comment-dwim-rest-of-buffer
 
     "M-." 'agda2-goto-definition-keyboard
     "M-," 'agda2-go-back))
