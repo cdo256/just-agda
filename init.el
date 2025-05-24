@@ -119,6 +119,7 @@
     "tt"   '(counsel-load-theme :which-key "choose theme")
     "<f1>" 'counsel-apropos
     "bb"   'ivy-switch-buffer
+    "fc"   'counsel-rg
     "ff"   'counsel-find-file
     "fF"   'counsel-find-file
     "fL"   'counsel-locate
