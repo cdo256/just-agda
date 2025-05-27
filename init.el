@@ -99,6 +99,9 @@
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 (global-set-key (kbd "C-s") 'save-buffer)
+(global-set-key (kbd "C-o") 'counsel-find-file)
+(global-set-key (kbd "<C-tab>") 'next-buffer)
+(global-set-key (kbd "<C-S-iso-lefttab>") 'previous-buffer)
 
 
 (general-auto-unbind-keys)
@@ -111,16 +114,16 @@
     :global-prefix "C-SPC")
 
   (efs/leader-keys
-    "f"    '(:ignore t :which-key "file")
     "b"    '(:ignore t :which-key "buffer")
-    "t"    '(:ignore t :which-key "toggles")
+    "bp"   'previous-buffer
+    "bn"   'next-buffer
     " "    'counsel-M-x
     "/s"   'counsel-rg
-    "tt"   '(counsel-load-theme :which-key "choose theme")
     "<f1>" 'counsel-apropos
     "bb"   'ivy-switch-buffer
+    "f"    '(:ignore t :which-key "file")
     "fc"   'counsel-rg
-    "ff"   'counsel-find-file
+    "ff"   'counsel-fzf
     "fF"   'counsel-find-file
     "fL"   'counsel-locate
     "fr"   'counsel-recentf
@@ -128,6 +131,8 @@
     "hi"   'counsel-info-lookup-symbol
     "hr"   'counsel-register
     "iu"   'counsel-unicode-char
+    "t"    '(:ignore t :which-key "toggles")
+    "tt"   '(counsel-load-theme :which-key "choose theme")
     "ym"   'counsel-mark-ring
     "yy"   'counsel-yank-pop
     ))
