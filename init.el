@@ -119,14 +119,18 @@
     "bn"   'next-buffer
     " "    'counsel-M-x
     "/s"   'counsel-rg
+    "/R"   'projectile-replace-regexp
     "<f1>" 'counsel-apropos
     "bb"   'ivy-switch-buffer
     "f"    '(:ignore t :which-key "file")
     "fc"   'counsel-rg
-    "ff"   'counsel-fzf
+    "ff"   'projectile-find-file
     "fF"   'counsel-find-file
     "fL"   'counsel-locate
     "fr"   'counsel-recentf
+    "p"    '(:ignore t :which-key "project")
+    "pd"   'projectile-dired
+    "pf"   'projectile-find-file
     "hda"  'counsel-apropos
     "hi"   'counsel-info-lookup-symbol
     "hr"   'counsel-register
