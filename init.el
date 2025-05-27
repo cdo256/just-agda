@@ -115,27 +115,29 @@
 
   (efs/leader-keys
     "b"    '(:ignore t :which-key "buffer")
-    "bp"   'previous-buffer
-    "bn"   'next-buffer
+    "f"    '(:ignore t :which-key "file")
+    "p"    '(:ignore t :which-key "project")
+    "t"    '(:ignore t :which-key "toggles")
+    ; "bb"   'ivy-switch-buffer ; Apparently order matters and this makes it unhappy, but it's happy further down.
     " "    'counsel-M-x
     "/s"   'counsel-rg
     "/R"   'projectile-replace-regexp
     "<f1>" 'counsel-apropos
     "bb"   'ivy-switch-buffer
+    "bp"   'previous-buffer
+    "bn"   'next-buffer
     "f"    '(:ignore t :which-key "file")
     "fc"   'counsel-rg
     "ff"   'projectile-find-file
     "fF"   'counsel-find-file
     "fL"   'counsel-locate
     "fr"   'counsel-recentf
-    "p"    '(:ignore t :which-key "project")
     "pd"   'projectile-dired
     "pf"   'projectile-find-file
     "hda"  'counsel-apropos
     "hi"   'counsel-info-lookup-symbol
     "hr"   'counsel-register
     "iu"   'counsel-unicode-char
-    "t"    '(:ignore t :which-key "toggles")
     "tt"   '(counsel-load-theme :which-key "choose theme")
     "ym"   'counsel-mark-ring
     "yy"   'counsel-yank-pop
