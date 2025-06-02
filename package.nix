@@ -23,6 +23,7 @@ let
     epkgs.agda2-mode
     epkgs.all-the-icons
     epkgs.all-the-icons-dired
+    epkgs.closql
     epkgs.command-log-mode
     epkgs.company
     epkgs.company-box
@@ -34,9 +35,12 @@ let
     #epkgs.dired-single
     epkgs.doom-modeline
     epkgs.doom-themes
+    epkgs.emacsql
     epkgs.evil
     epkgs.evil-collection
+    epkgs.forge
     epkgs.general
+    epkgs.ghub
     epkgs.helpful
     epkgs.ivy
     epkgs.ivy-prescient
@@ -45,6 +49,7 @@ let
     epkgs.lsp-mode
     epkgs.lsp-treemacs
     epkgs.lsp-ui
+    epkgs.magit
     epkgs.no-littering
     epkgs.projectile
     epkgs.rainbow-delimiters
