@@ -1,6 +1,3 @@
-;; NOTE: init.el is now generated from Emacs.org.  Please edit that file
-;;       in Emacs and init.el will be generated automatically!
-
 ;; You will most likely need to adjust this font size for your system!
 (defvar efs/default-font-size 180)
 (defvar efs/default-variable-font-size 180)
@@ -132,6 +129,8 @@
     "fF"   'counsel-find-file
     "fL"   'counsel-locate
     "fr"   'counsel-recentf
+    "gg"   'magit
+    "gs"   'magit
     "pd"   'projectile-dired
     "pf"   'projectile-find-file
     "hda"  'counsel-apropos
