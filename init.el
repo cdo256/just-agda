@@ -666,6 +666,11 @@
 (with-eval-after-load 'agda2-mode
   (define-key agda2-mode-map (kbd "TAB") 'eri-indent))
 
+;; Unconditionally set Agda input mode in the minibuffer.
+(defun set-agda-minibuffer-input ()
+  (set-input-method "Agda"))
+
+(add-hook 'minibuffer-setup-hook #'set-agda-minibuffer-input)
 
 ;; Enable Agda input method in insert mode
 ;(add-hook 'evil-insert-state-entry-hook
