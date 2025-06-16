@@ -623,6 +623,11 @@
 ;(use-package dired-single
 ;  :commands (dired dired-jump))
 
+(setq auto-mode-alist
+  (append '(("\\.agda\\'" . agda2-mode)
+            ("\\.lagda.md\\'" . agda2-mode))
+          auto-mode-alist))
+
 (with-eval-after-load 'agda2-mode
   (evil-define-key 'normal agda2-mode-map
 
