@@ -5,6 +5,7 @@
       ps.standard-library
     ])
   ),
+  agda2-mode ? pkgs.emacsPackages.agda2-mode,
   ...
 }:
 let
@@ -20,7 +21,7 @@ let
     '';
   };
   emacs = (emacsPackagesFor pkgs.emacs).emacsWithPackages (epkgs: [
-    epkgs.agda2-mode
+    agda2-mode
     epkgs.all-the-icons
     epkgs.all-the-icons-dired
     epkgs.closql
