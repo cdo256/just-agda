@@ -166,6 +166,28 @@
   :config
   (evil-collection-init))
 
+(use-package evil-surround
+  :ensure t
+  :config
+  (global-evil-surround-mode 1)
+  (evil-define-key 'visual evil-surround-mode-map "s" 'evil-surround-region)
+  (evil-define-key 'visual evil-surround-mode-map "S" 'evil-Surround-region))
+
+
+(defun my/agda-embrace-pair ()
+  (embrace-add-pair ?h "{!" "!}"))
+
+(use-package evil-embrace
+  :after evil-surround
+  :ensure t
+  :config
+  (evil-embrace-enable-evil-surround-integration)
+  (add-hook 'agda2-mode-hook (lambda () (embrace-add-pair ?h "{!" "!}"))))
+  ; (add-hook 'agda-mode-hook 'agda-mode-evil-embrace-hook))
+;; see here: https://github.com/cute-jumper/embrace.el#adding-more-surrounding-pairs
+;; for how to add more custom pairs
+
+
 (use-package command-log-mode
   :commands command-log-mode)
 

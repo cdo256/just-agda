@@ -39,6 +39,8 @@ let
     epkgs.emacsql
     epkgs.evil
     epkgs.evil-collection
+    epkgs.evil-embrace
+    epkgs.evil-surround
     epkgs.forge
     epkgs.general
     epkgs.ghub
