@@ -689,6 +689,10 @@
     "M-." 'agda2-goto-definition-keyboard
     "M-," 'agda2-go-back))
 
+(setq agda-input-user-translations
+      '(("^-1" . ("⁻¹"))
+        ("sym" . ("˘"))))
+
 ;; Preserve TAB indentation
 (with-eval-after-load 'agda2-mode
   (define-key agda2-mode-map (kbd "TAB") 'eri-indent))
