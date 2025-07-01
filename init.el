@@ -733,3 +733,21 @@
 
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 2 1000 1000))
+
+(define-key evil-normal-state-map (kbd "C-<left>")  'evil-window-left)
+(define-key evil-normal-state-map (kbd "C-<down>")  'evil-window-down)
+(define-key evil-normal-state-map (kbd "C-<up>")    'evil-window-up)
+(define-key evil-normal-state-map (kbd "C-<right>") 'evil-window-right)
+(define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
+(define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
+(define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
+(define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
+
+(define-key evil-motion-state-map (kbd "C-<left>")  'evil-window-left)
+(define-key evil-motion-state-map (kbd "C-<down>")  'evil-window-down)
+(define-key evil-motion-state-map (kbd "C-<up>")    'evil-window-up)
+(define-key evil-motion-state-map (kbd "C-<right>") 'evil-window-right)
+(define-key evil-motion-state-map (kbd "C-h") 'evil-window-left)
+(define-key evil-motion-state-map (kbd "C-j") 'evil-window-down)
+(define-key evil-motion-state-map (kbd "C-k") 'evil-window-up)
+(define-key evil-motion-state-map (kbd "C-l") 'evil-window-right)
