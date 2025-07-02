@@ -691,7 +691,9 @@
 
 (setq agda-input-user-translations
       '(("^-1" . ("⁻¹"))
-        ("sym" . ("˘"))))
+        ("sym" . ("˘"))
+        ("lf" . ("◎"))
+        ("fk" . ("⊻"))))
 
 ;; Preserve TAB indentation
 (with-eval-after-load 'agda2-mode
