@@ -173,7 +173,6 @@
   (evil-define-key 'visual evil-surround-mode-map "s" 'evil-surround-region)
   (evil-define-key 'visual evil-surround-mode-map "S" 'evil-Surround-region))
 
-
 ;; see here: https://github.com/cute-jumper/embrace.el#adding-more-surrounding-pairs
 ;; for how to add more custom pairs
 (defun my/agda-embrace-pair ()
@@ -736,6 +735,10 @@
 
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 2 1000 1000))
+
+(with-eval-after-load 'agda2-mode
+  (evil-define-key 'normal agda2-mode-map (kbd "gd")
+                   'agda2-goto-definition-keyboard))
 
 (define-key evil-normal-state-map (kbd "C-<left>")  'evil-window-left)
 (define-key evil-normal-state-map (kbd "C-<down>")  'evil-window-down)
