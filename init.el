@@ -174,19 +174,20 @@
   (evil-define-key 'visual evil-surround-mode-map "S" 'evil-Surround-region))
 
 
+;; see here: https://github.com/cute-jumper/embrace.el#adding-more-surrounding-pairs
+;; for how to add more custom pairs
 (defun my/agda-embrace-pair ()
-  (embrace-add-pair ?h "{!" "!}"))
+  (embrace-add-pair ?h "{!" "!}")
+  (embrace-add-pair ?B "⟦ " " ⟧")
+  (embrace-add-pair ?V "∥ " " ∥")
+  (embrace-add-pair ?R "⦃ " " ⦄"))
 
 (use-package evil-embrace
   :after evil-surround
   :ensure t
   :config
   (evil-embrace-enable-evil-surround-integration)
-  (add-hook 'agda2-mode-hook (lambda () (embrace-add-pair ?h "{!" "!}"))))
-  ; (add-hook 'agda-mode-hook 'agda-mode-evil-embrace-hook))
-;; see here: https://github.com/cute-jumper/embrace.el#adding-more-surrounding-pairs
-;; for how to add more custom pairs
-
+  (add-hook 'agda2-mode-hook 'my/agda-embrace-pair))
 
 (use-package command-log-mode
   :commands command-log-mode)
