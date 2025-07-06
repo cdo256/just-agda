@@ -692,9 +692,7 @@
 (setq agda-input-user-translations
       '(("^-1" . ("⁻¹"))
         ("sym" . ("˘"))
-        ("lf" . ("◎"))
-        ("fk" . ("⊻"))
-	("\\\\\\" . ("∖")))) ;; Triple backslash -> \setminus
+        ("\\\\" . ("∖")))) ;; Triple backslash -> \setminus
 
 ;; Preserve TAB indentation
 (with-eval-after-load 'agda2-mode
