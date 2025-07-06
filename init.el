@@ -693,7 +693,8 @@
       '(("^-1" . ("⁻¹"))
         ("sym" . ("˘"))
         ("lf" . ("◎"))
-        ("fk" . ("⊻"))))
+        ("fk" . ("⊻"))
+	("\\\\\\" . ("∖")))) ;; Triple backslash -> \setminus
 
 ;; Preserve TAB indentation
 (with-eval-after-load 'agda2-mode
