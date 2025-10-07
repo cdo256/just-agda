@@ -99,7 +99,7 @@
 (global-set-key (kbd "C-o") 'counsel-find-file)
 (global-set-key (kbd "<C-tab>") 'next-buffer)
 (global-set-key (kbd "<C-S-iso-lefttab>") 'previous-buffer)
-
+(global-set-key (kbd "M-u") 'universal-argument)
 
 (general-auto-unbind-keys)
 (use-package general
@@ -121,8 +121,9 @@
     "/R"   'projectile-replace-regexp
     "<f1>" 'counsel-apropos
     "bb"   'ivy-switch-buffer
-    "bp"   'previous-buffer
     "bn"   'next-buffer
+    "bs"   'scratch-buffer
+    "bp"   'previous-buffer
     "f"    '(:ignore t :which-key "file")
     "fc"   'counsel-rg
     "ff"   'projectile-find-file
