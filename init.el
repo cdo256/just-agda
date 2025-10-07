@@ -121,6 +121,7 @@
     "/R"   'projectile-replace-regexp
     "<f1>" 'counsel-apropos
     "bb"   'ivy-switch-buffer
+    "bm"   'view-echo-area-messages
     "bn"   'next-buffer
     "bs"   'scratch-buffer
     "bp"   'previous-buffer
@@ -174,20 +175,24 @@
   (evil-define-key 'visual evil-surround-mode-map "s" 'evil-surround-region)
   (evil-define-key 'visual evil-surround-mode-map "S" 'evil-Surround-region))
 
-;; see here: https://github.com/cute-jumper/embrace.el#adding-more-surrounding-pairs
-;; for how to add more custom pairs
-(defun my/agda-embrace-pair ()
-  (embrace-add-pair ?h "{!" "!}")
-  (embrace-add-pair ?B "⟦ " " ⟧")
-  (embrace-add-pair ?V "∥ " " ∥")
-  (embrace-add-pair ?R "⦃ " " ⦄"))
+(use-package embrace :ensure t)
 
 (use-package evil-embrace
   :after evil-surround
   :ensure t
   :config
-  (evil-embrace-enable-evil-surround-integration)
-  (add-hook 'agda2-mode-hook 'my/agda-embrace-pair))
+  (defun my/agda-embrace-pair ()
+    (dolist (pair '((?h . ("{!" . "!}"))
+                    (?B . ("⟦ " . " ⟧"))
+                    (?V . ("∥ " . " ∥"))
+                    (?R . ("⦃ " . " ⦄"))))
+      (embrace-add-pair (car pair) (cadr pair) (cddr pair))
+      (push pair evil-surround-operator-alist))
+    (evil-embrace-enable-evil-surround-integration)
+    (message "Embrace: %S" (assoc ?B embrace--pairs-list))
+    (message "Evil: %S" (assoc ?B evil-surround-operator-alist)))
+  (add-hook 'emacs-lisp-mode-hook #'my/agda-embrace-pair)
+  (add-hook 'agda2-mode-hook #'my/agda-embrace-pair))
 
 (use-package command-log-mode
   :commands command-log-mode)
@@ -645,6 +650,15 @@
 ;
 ;(use-package dired-single
 ;  :commands (dired dired-jump))
+
+(with-eval-after-load 'emacs-lisp-mode
+  (evil-define-key 'normal emacs-lisp-mode-map
+    ","  nil ; '(:ignore t :which-key "Agda")
+    ",e"  nil ; '(:ignore t :which-key "Agda")
+    ",eb"  'eval-buffer
+    ",er"  'eval-region
+    ",es"  'eval-last-sexp
+    ",e:"  'eval-expression))
 
 (setq auto-mode-alist
   (append '(("\\.agda\\'" . agda2-mode)
