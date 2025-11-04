@@ -60,11 +60,4 @@ let
     ${emacs}/bin/emacs --init-directory $CONFIG_DIR "$@"
   '';
 in
-# See nix Cookbook.
-pkgs.symlinkJoin {
-  name = "just-agda";
-  paths = [
-    emacs
-    wrapped
-  ];
-}
+wrapped
