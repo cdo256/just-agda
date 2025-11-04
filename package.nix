@@ -1,20 +1,13 @@
 {
   pkgs,
-  agda ? (
-    pkgs.agda.withPackages (ps: [
-      ps.standard-library
-    ])
-  ),
   agda2-mode ? pkgs.emacsPackages.agda2-mode,
   ...
 }:
 let
-  inherit (pkgs) replaceVars emacsPackagesFor;
+  inherit (pkgs) emacsPackagesFor;
   init-file = pkgs.stdenv.mkDerivation {
     name = "init.el";
-    src = replaceVars ./init.el {
-      inherit agda;
-    };
+    src = ./init.el;
     phases = [ "installPhase" ];
     installPhase = ''
       cp $src $out
@@ -73,7 +66,5 @@ pkgs.symlinkJoin {
   paths = [
     emacs
     wrapped
-    agda
   ];
-  buildInputs = [ agda ];
 }
