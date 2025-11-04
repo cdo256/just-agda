@@ -140,6 +140,7 @@
     "hr"   'counsel-register
     "iu"   'counsel-unicode-char
     "tt"   '(counsel-load-theme :which-key "choose theme")
+    "u"    'universal-argument
     "ym"   'counsel-mark-ring
     "yy"   'counsel-yank-pop
     ))
