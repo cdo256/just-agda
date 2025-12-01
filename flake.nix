@@ -22,6 +22,11 @@
       perSystem =
         { pkgs, ... }:
         {
+          devShells.default = pkgs.mkShell {
+            buildInputs = [
+              pkgs.agda # For testing
+            ];
+          };
           packages = rec {
             just-agda = makeOverridable (import ./package.nix) { inherit pkgs; };
             default = just-agda;
