@@ -35,6 +35,8 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
+;; Store customizations in etc/custom.el instead of init.el
+(setq custom-file (no-littering-expand-etc-file-name "custom.el"))
 
 (use-package no-littering)
 
@@ -42,6 +44,13 @@
 ;; auto save files in the same path as it uses for sessions
 (setq auto-save-file-name-transforms
       `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+
+;; Disable lockfiles (.#xyz) entirely
+(setq create-lockfiles nil)
+
+(let ((backup-dir (expand-file-name "backups/" user-emacs-directory)))
+  (make-directory backup-dir t)
+  (setq backup-directory-alist `(("." . ,backup-dir))))
 
 (setq inhibit-startup-message t)
 
