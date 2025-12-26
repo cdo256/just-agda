@@ -121,8 +121,7 @@
     "fr"   'counsel-recentf
     "gg"   'magit
     "gs"   'magit
-    "pd"   'projectile-dired
-    "pf"   'projectile-find-file
+    "p"    'projectile-command-map
     "hda"  'counsel-apropos
     "hi"   'counsel-info-lookup-symbol
     "hr"   'counsel-register
@@ -238,6 +237,7 @@
   :custom
   (ivy-prescient-enable-filtering nil)
   :config
+  (prescient-persist-mode 1)
   (ivy-prescient-mode 1))
 
 (use-package helpful
@@ -328,8 +328,6 @@
   :diminish projectile-mode
   :config (projectile-mode)
   :custom ((projectile-completion-system 'ivy))
-  :bind-keymap
-  ("C-c p" . projectile-command-map)
   :init
   ;; NOTE: Set this to the folder where you keep your Git repos!
   (when (file-directory-p "~/src")
