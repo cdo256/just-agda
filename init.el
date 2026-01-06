@@ -113,6 +113,7 @@
     "bn"   'next-buffer
     "bs"   'scratch-buffer
     "bp"   'previous-buffer
+    "bv"   'revert-buffer-quick
     "f"    '(:ignore t :which-key "file")
     "fc"   'counsel-rg
     "ff"   'projectile-find-file
