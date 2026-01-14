@@ -1,4 +1,4 @@
-;; You will most likely need to adjust this font size for your system!
+; You will most likely need to adjust this font size for your system!
 (defvar efs/default-font-size 180)
 (defvar efs/default-variable-font-size 180)
 
@@ -471,24 +471,6 @@
 (require 'windmove)
 (windmove-default-keybindings 'control)
 
-; (define-key evil-normal-state-map (kbd "C-<left>")  'evil-window-left)
-; (define-key evil-normal-state-map (kbd "C-<down>")  'evil-window-down)
-; (define-key evil-normal-state-map (kbd "C-<up>")    'evil-window-up)
-; (define-key evil-normal-state-map (kbd "C-<right>") 'evil-window-right)
-; (define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
-; (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
-; (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
-; (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
-; 
-; (define-key evil-motion-state-map (kbd "C-<left>")  'evil-window-left)
-; (define-key evil-motion-state-map (kbd "C-<down>")  'evil-window-down)
-; (define-key evil-motion-state-map (kbd "C-<up>")    'evil-window-up)
-; (define-key evil-motion-state-map (kbd "C-<right>") 'evil-window-right)
-; (define-key evil-motion-state-map (kbd "C-h") 'evil-window-left)
-; (define-key evil-motion-state-map (kbd "C-j") 'evil-window-down)
-; (define-key evil-motion-state-map (kbd "C-k") 'evil-window-up)
-; (define-key evil-motion-state-map (kbd "C-l") 'evil-window-right)
-
 (global-set-key (kbd "C-j") 'windmove-down)
 (global-set-key (kbd "C-k") 'windmove-up)
 (global-set-key (kbd "C-l") 'windmove-right)
@@ -503,3 +485,5 @@
     (evil-define-key 'motion (symbol-value map)
       (kbd "C-j") nil
       (kbd "C-k") nil)))
+
+(require 'atomic-chrome)

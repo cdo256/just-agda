@@ -51,6 +51,7 @@ let
     epkgs.rainbow-delimiters
     epkgs.visual-fill-column
     epkgs.which-key
+    epkgs.atomic-chrome
   ]);
   wrapped = pkgs.writeShellScriptBin "just-agda" ''
     CONFIG_DIR="''${XDG_CONFIG_HOME:-''$HOME/.config}/just-agda"
