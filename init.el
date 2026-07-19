@@ -371,6 +371,238 @@
             ("\\.lagda.md\\'" . agda2-mode))
           auto-mode-alist))
 
+(defun agda-comment--scan-block-comment-end ()
+  (when (looking-at "{-")
+    (goto-char (+ (point) 2))
+    (let ((depth 1))
+      (while (and (> depth 0)
+                  (re-search-forward "{-\\|-}" nil t))
+        (setq depth (+ depth (if (string= (match-string 0) "{-") 1 -1))))
+      (and (= depth 0) (point)))))
+
+(defun agda-comment--region-block-bounds (beg end)
+  (save-excursion
+    (let ((start (progn
+                   (goto-char beg)
+                   (skip-chars-forward " \t\n" end)
+                   (point)))
+          (finish (progn
+                    (goto-char end)
+                    (skip-chars-backward " \t\n" beg)
+                    (point))))
+      (when (< start finish)
+        (goto-char start)
+        (when (looking-at "{-")
+          (let ((close-end (agda-comment--scan-block-comment-end)))
+            (when (and close-end (= close-end finish))
+              (list start (+ start 2) (- close-end 2) close-end))))))))
+
+(defun agda-comment--containing-block-bounds (beg end)
+  (save-excursion
+    (goto-char (point-min))
+    (let (result stack)
+      (while (and (not result)
+                  (re-search-forward "{-\\|-}" nil t))
+        (if (string= (match-string 0) "{-")
+            (push (match-beginning 0) stack)
+          (when stack
+            (let ((start (pop stack))
+                  (close-end (point)))
+              (when (and (<= start beg)
+                         (>= close-end end))
+                (setq result (cons start close-end)))))))
+      result)))
+
+(defun agda-comment--trailing-block-bounds ()
+  (save-excursion
+    (goto-char (point-max))
+    (skip-chars-backward " \t\n")
+    (let ((close-end (point)))
+      (when (and (>= close-end (+ (point-min) 2))
+                 (progn
+                   (goto-char (- close-end 2))
+                   (looking-at "-}")))
+        (let ((depth 1)
+              start)
+          (while (and (> depth 0)
+                      (re-search-backward "{-\\|-}" nil t))
+            (setq depth (+ depth (if (string= (match-string 0) "-}") 1 -1)))
+            (when (= depth 0)
+              (setq start (match-beginning 0))))
+          (when start
+            (cons start close-end)))))))
+
+(defun agda-comment--delimiters (beg end)
+  (if (save-excursion
+        (goto-char beg)
+        (search-forward "\n" end t))
+      (cons (if (save-excursion
+                  (goto-char beg)
+                  (bolp))
+                "{-\n"
+              "{- ")
+            (if (save-excursion
+                  (goto-char end)
+                  (bolp))
+                "-}"
+              " -}"))
+    '("{- " . " -}")))
+
+(defun agda-comment--ends-in-newline-p (end)
+  (and (> end (point-min))
+       (eq (char-before end) ?\n)))
+
+(defun agda-comment--line-comment-region (beg end)
+  (save-excursion
+    (goto-char beg)
+    (while (< (point) end)
+      (beginning-of-line)
+      (unless (looking-at "[ \t]*$")
+        (back-to-indentation)
+        (insert "-- ")
+        (setq end (+ end 3)))
+      (forward-line 1))))
+
+(defun agda-comment--line-uncomment-region (beg end)
+  (save-excursion
+    (goto-char beg)
+    (while (< (point) end)
+      (beginning-of-line)
+      (back-to-indentation)
+      (when (looking-at "-- ?")
+        (let ((len (length (match-string 0))))
+          (replace-match "")
+          (setq end (- end len))))
+      (forward-line 1))))
+
+(defun agda-comment--uncomment-block-bounds (start close-end)
+  (let* ((open-start start)
+         (open-end (+ start 2))
+         (close-start (- close-end 2))
+         (strip-newlines (and (eq (char-after open-end) ?\n)
+                              (eq (char-before close-start) ?\n)))
+         (strip-spaces (and (not strip-newlines)
+                            (eq (char-after open-end) ?\s)
+                            (eq (char-before close-start) ?\s)))
+         (open-limit (+ open-end (if (or strip-newlines strip-spaces) 1 0)))
+         (close-begin (- close-start (if (or strip-newlines strip-spaces) 1 0))))
+    (delete-region close-begin close-end)
+    (delete-region open-start open-limit)))
+
+(defun agda-comment--block-comment-region (beg end)
+  (let* ((delimiters (agda-comment--delimiters beg end))
+         (open (car delimiters))
+         (close (cdr delimiters))
+         (close-pos (+ end (length open))))
+    (goto-char beg)
+    (insert open)
+    (goto-char close-pos)
+    (insert close)))
+
+(defun agda-comment--block-comment-until-eof (beg end)
+  (goto-char beg)
+  (insert "{-\n")
+  (goto-char (+ end 3))
+  (unless (bolp)
+    (insert "\n"))
+  (insert "-}"))
+
+(defun agda-comment-region-function (beg end &optional arg)
+  (if (or (consp arg)
+          (and (numberp arg) (< arg 0)))
+      (agda-uncomment-region-function beg end)
+    (cond
+     ((agda-comment--containing-block-bounds beg end)
+      (agda-uncomment-region-function beg end))
+     ((comment-only-p beg end)
+      (agda-comment--line-uncomment-region beg end))
+     ((agda-comment--ends-in-newline-p end)
+      (agda-comment--line-comment-region beg end))
+     (t
+      (agda-comment--block-comment-region beg end)))))
+
+(defun agda-uncomment-region-function (beg end &optional _arg)
+  (let ((bounds (or (let ((exact (agda-comment--region-block-bounds beg end)))
+                      (when exact
+                        (cons (nth 0 exact) (nth 3 exact))))
+                    (agda-comment--containing-block-bounds beg end))))
+    (if bounds
+        (agda-comment--uncomment-block-bounds (car bounds) (cdr bounds))
+      (agda-comment--line-uncomment-region beg end))))
+
+(defun agda-comment--extend-trailing-block (beg)
+  (let ((bounds (agda-comment--trailing-block-bounds)))
+    (when (and bounds (> (car bounds) beg))
+      (let* ((start (car bounds))
+             (open-end (+ start 2))
+             (after-open (char-after open-end))
+             (delete-end (+ open-end (if (or (eq after-open ?\n)
+                                             (eq after-open ?\s))
+                                         1
+                                       0)))
+             (open (car (agda-comment--delimiters beg (point-max)))))
+        (delete-region start delete-end)
+        (goto-char beg)
+        (insert open)
+        t))))
+
+(defun agda-comment-until-eof ()
+  "Comment or uncomment from the current line to the end of the buffer."
+  (interactive)
+  (save-excursion
+    (let ((beg (line-beginning-position))
+          (end (point-max)))
+      (cond
+       ((agda-comment--region-block-bounds beg end)
+        (agda-uncomment-region-function beg end))
+       ((agda-comment--containing-block-bounds beg beg)
+        (agda-uncomment-region-function beg beg))
+       ((comment-only-p beg end)
+        (agda-uncomment-region-function beg end))
+       ((agda-comment--extend-trailing-block beg))
+       (t
+        (agda-comment--block-comment-until-eof beg end))))))
+
+(defun agda-comment-or-uncomment-region (beg end)
+  (interactive "r")
+  (if (or (agda-comment--region-block-bounds beg end)
+          (comment-only-p beg end))
+      (agda-uncomment-region-function beg end)
+    (agda-comment-region-function beg end)))
+
+(defun agda-comment-line (&optional n)
+  "Comment or uncomment whole lines using Agda block comments."
+  (interactive "p")
+  (let* ((n (or n 1))
+         (bounds (if (use-region-p)
+                     (cons (save-excursion
+                             (goto-char (region-beginning))
+                             (line-beginning-position))
+                           (save-excursion
+                             (goto-char (max (region-beginning)
+                                             (1- (region-end))))
+                             (line-end-position)))
+                   (if (>= n 0)
+                       (cons (line-beginning-position)
+                             (save-excursion
+                               (forward-line (max 0 (1- n)))
+                               (line-end-position)))
+                     (cons (save-excursion
+                             (forward-line n)
+                             (line-beginning-position))
+                           (save-excursion
+                             (line-end-position))))))
+         (beg (car bounds))
+         (end (cdr bounds)))
+    (agda-comment-or-uncomment-region beg end)
+    (goto-char end)))
+
+(defun agda-comment-setup ()
+  (setq-local comment-region-function #'agda-comment-region-function)
+  (setq-local uncomment-region-function #'agda-uncomment-region-function))
+
+(add-hook 'agda2-mode-hook #'agda-comment-setup)
+
 (with-eval-after-load 'agda2-mode
   (evil-define-key 'normal agda2-mode-map
 
@@ -400,20 +632,34 @@
     ", " 'agda2-give
     ",," 'agda2-goal-and-context
     ",." 'agda2-goal-and-context-and-inferred
-    ",;" 'agda2-goal-and-context-and-checked
     ",=" 'agda2-show-constraints
     ",?" 'agda2-show-goals
     ",m" 'agda2-elaborate-give
     ",z" 'agda2-search-about-toplevel
-    ",;" 'agda2-comment-dwim-rest-of-buffer
+    ",;" 'agda-comment-until-eof
+    ",:" 'comment-region
 
     "M-." 'agda2-goto-definition-keyboard
-    "M-," 'agda2-go-back))
+    "M-," 'agda2-go-back)
+
+  (evil-define-key 'visual agda2-mode-map
+    ",:" 'comment-region)
+
+  (define-key agda2-mode-map [remap comment-line] #'agda-comment-line))
 
 (setq agda-input-user-translations
       '(("^-1" . ("⁻¹"))
         ("sym" . ("˘"))
         ("\\\\" . ("∖")))) ;; Triple backslash -> \setminus
+
+(defun agda-input-setup-percent-delimiter (&rest _)
+  (with-temp-buffer
+    (set-input-method "Agda")
+    (define-key (quail-translation-keymap) "%" #'quail-select-current)))
+
+(with-eval-after-load 'agda-input
+  (advice-add 'agda-input-setup :after #'agda-input-setup-percent-delimiter)
+  (agda-input-setup-percent-delimiter))
 
 ;(with-eval-after-load 'agda2-mode
 ;  ;; Use motion (or normal) state in *Agda information* buffers
