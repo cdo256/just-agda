@@ -357,10 +357,10 @@
   :hook (prog-mode . rainbow-delimiters-mode))
 
 
-(with-eval-after-load 'emacs-lisp-mode
+(with-eval-after-load 'elisp-mode
   (evil-define-key 'normal emacs-lisp-mode-map
-    ","  nil ; '(:ignore t :which-key "Agda")
-    ",e"  nil ; '(:ignore t :which-key "Agda")
+    ","  nil 
+    ",e"  nil
     ",eb"  'eval-buffer
     ",er"  'eval-region
     ",es"  'eval-last-sexp
