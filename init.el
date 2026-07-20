@@ -458,7 +458,6 @@
     (while (< (point) end)
       (beginning-of-line)
       (unless (looking-at "[ \t]*$")
-        (back-to-indentation)
         (insert "-- ")
         (setq end (+ end 3)))
       (forward-line 1))))
@@ -468,7 +467,6 @@
     (goto-char beg)
     (while (< (point) end)
       (beginning-of-line)
-      (back-to-indentation)
       (when (looking-at "-- ?")
         (let ((len (length (match-string 0))))
           (replace-match "")
@@ -563,12 +561,80 @@
        (t
         (agda-comment--block-comment-until-eof beg end))))))
 
+(defun agda-block-comment-or-uncomment-region (beg end)
+  (interactive "r")
+  (if (or (agda-comment--region-block-bounds beg end)
+          (agda-comment--containing-block-bounds beg end))
+      (agda-uncomment-region-function beg end)
+    (agda-comment--block-comment-region beg end)))
+
+(defun agda-block-comment-dwim ()
+  (interactive)
+  (if (use-region-p)
+      (agda-block-comment-or-uncomment-region (region-beginning) (region-end))
+    (let ((bounds (agda-comment--line-region-bounds)))
+      (agda-block-comment-or-uncomment-region (car bounds) (cdr bounds)))))
+
 (defun agda-comment-or-uncomment-region (beg end)
   (interactive "r")
   (if (or (agda-comment--region-block-bounds beg end)
           (comment-only-p beg end))
       (agda-uncomment-region-function beg end)
     (agda-comment-region-function beg end)))
+
+(defun agda-comment--line-region-bounds ()
+  (if (use-region-p)
+      (let* ((beg (region-beginning))
+             (end (region-end))
+             (line-beg (save-excursion
+                         (goto-char beg)
+                         (line-beginning-position)))
+             (line-end (save-excursion
+                         (goto-char end)
+                         (if (and (> end beg) (bolp))
+                             end
+                           (line-end-position)))))
+        (cons line-beg line-end))
+    (cons (line-beginning-position) (line-end-position))))
+
+(defun agda-comment--whole-line-region-p ()
+  (and (use-region-p)
+       (let ((beg (region-beginning))
+             (end (region-end)))
+         (and (save-excursion
+                (goto-char beg)
+                (bolp))
+              (save-excursion
+                (goto-char end)
+                (or (bolp) (eolp)))))))
+
+(defun agda-comment--inline-comment-bounds ()
+  (let* ((beg (if (use-region-p)
+                  (region-beginning)
+                (line-beginning-position)))
+         (end (save-excursion
+                (goto-char beg)
+                (line-end-position))))
+    (cons beg end)))
+
+(defun agda-comment--inline-toggle (beg end)
+  (save-excursion
+    (goto-char beg)
+    (if (looking-at "-- ?")
+        (replace-match "")
+      (insert "-- "))))
+
+(defun agda-line-comment-dwim ()
+  (interactive)
+  (cond
+   ((and (use-region-p) (not (agda-comment--whole-line-region-p)))
+    (let ((bounds (agda-comment--inline-comment-bounds)))
+      (agda-comment--inline-toggle (car bounds) (cdr bounds))))
+   (t
+    (let ((bounds (agda-comment--line-region-bounds)))
+      (if (comment-only-p (car bounds) (cdr bounds))
+          (agda-comment--line-uncomment-region (car bounds) (cdr bounds))
+        (agda-comment--line-comment-region (car bounds) (cdr bounds)))))))
 
 (defun agda-comment-line (&optional n)
   "Comment or uncomment whole lines using Agda block comments."
@@ -636,14 +702,16 @@
     ",?" 'agda2-show-goals
     ",m" 'agda2-elaborate-give
     ",z" 'agda2-search-about-toplevel
+    ",-" 'agda-line-comment-dwim
     ",;" 'agda-comment-until-eof
-    ",:" 'comment-region
+    ",:" 'agda-block-comment-dwim
 
     "M-." 'agda2-goto-definition-keyboard
     "M-," 'agda2-go-back)
 
   (evil-define-key 'visual agda2-mode-map
-    ",:" 'comment-region)
+    ",-" 'agda-line-comment-dwim
+    ",:" 'agda-block-comment-dwim)
 
   (define-key agda2-mode-map [remap comment-line] #'agda-comment-line))
 
