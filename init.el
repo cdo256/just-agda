@@ -170,16 +170,21 @@
   :after evil-surround
   :ensure t
   :config
+  (defun my/agda-set-evil-surround-pair (key left right)
+    (setq evil-surround-operator-alist
+          (assq-delete-all key evil-surround-operator-alist))
+    (push `(,key ,left . ,right) evil-surround-operator-alist))
+
   (defun my/agda-embrace-pair ()
     (dolist (pair '((?h . ("{!" . "!}"))
                     (?B . ("⟦ " . " ⟧"))
                     (?V . ("∥ " . " ∥"))
-                    (?R . ("⦃ " . " ⦄"))))
+                    (?R . ("⦃ " . " ⦄"))
+		    (?A . ("⟨ " . " ⟩"))))
       (embrace-add-pair (car pair) (cadr pair) (cddr pair))
-      (push pair evil-surround-operator-alist))
-    (evil-embrace-enable-evil-surround-integration)
-    (message "Embrace: %S" (assoc ?B embrace--pairs-list))
-    (message "Evil: %S" (assoc ?B evil-surround-operator-alist)))
+      (my/agda-set-evil-surround-pair (car pair) (cadr pair) (cddr pair)))
+    (unless (bound-and-true-p evil-embrace-evil-surround-integration)
+      (evil-embrace-enable-evil-surround-integration)))
   (add-hook 'emacs-lisp-mode-hook #'my/agda-embrace-pair)
   (add-hook 'agda2-mode-hook #'my/agda-embrace-pair))
 
