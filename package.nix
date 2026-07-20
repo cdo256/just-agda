@@ -1,10 +1,16 @@
 {
   pkgs,
   agda2-mode ? pkgs.emacsPackages.agda2-mode,
+  narya ? null,
+  naryaInstallPg ? null,
   ...
 }:
 let
-  inherit (pkgs) emacsPackagesFor;
+  inherit (pkgs) emacsPackagesFor lib;
+  extraTools = lib.filter (tool: tool != null) [
+    narya
+    naryaInstallPg
+  ];
   init-file = pkgs.stdenv.mkDerivation {
     name = "init.el";
     src = ./init.el;
@@ -54,6 +60,9 @@ let
     epkgs.atomic-chrome
   ]);
   wrapped = pkgs.writeShellScriptBin "just-agda" ''
+    ${lib.optionalString (extraTools != [ ]) ''
+      export PATH="${lib.makeBinPath extraTools}:$PATH"
+    ''}
     CONFIG_DIR="''${XDG_CONFIG_HOME:-''$HOME/.config}/just-agda"
     mkdir -p $CONFIG_DIR
     rm -f $CONFIG_DIR/init.el

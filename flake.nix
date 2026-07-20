@@ -21,14 +21,45 @@
       ];
       perSystem =
         { pkgs, ... }:
+        let
+          naryaPackage = pkgs.writeShellScriptBin "narya" ''
+            set -euo pipefail
+
+            root=/home/cdo/src/narya
+
+            for candidate in \
+              "$root/_build/install/default/bin/narya" \
+              "$root/_build/default/bin/narya.exe"
+            do
+              if [ -x "$candidate" ]; then
+                exec "$candidate" "$@"
+              fi
+            done
+
+            exec ${pkgs.nix}/bin/nix develop "$root" --command ${pkgs.bash}/bin/bash -lc 'cd /home/cdo/src/narya && exec dune exec narya -- "$@"' bash "$@"
+          '';
+          naryaInstallPg = pkgs.writeShellScriptBin "narya-install-pg" ''
+            set -euo pipefail
+            cd /home/cdo/src/narya/dist
+            exec ${pkgs.bash}/bin/bash ./install-pg.sh "$@"
+          '';
+        in
         {
           devShells.default = pkgs.mkShell {
             buildInputs = [
               pkgs.agda # For testing
+              naryaPackage
+              naryaInstallPg
             ];
           };
           packages = rec {
-            just-agda = makeOverridable (import ./package.nix) { inherit pkgs; };
+            narya = naryaPackage;
+            narya-install-pg = naryaInstallPg;
+            just-agda = makeOverridable (import ./package.nix) {
+              inherit pkgs;
+              narya = naryaPackage;
+              naryaInstallPg = naryaInstallPg;
+            };
             default = just-agda;
           };
         };
