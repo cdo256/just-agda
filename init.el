@@ -349,6 +349,46 @@
   :custom
   (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
+(use-package proof-site
+  :ensure nil
+  :demand t
+  :mode (("\\.ny\\'" . narya-mode)
+         ("\\.nyo\\'" . narya-mode))
+  :init
+  (setq proof-output-tooltips nil
+        proof-three-window-mode-policy 'hybrid
+        proof-three-window-enable t)
+  :config
+  (add-to-list 'load-path "/home/cdo/src/narya/proofgeneral")
+  (add-to-list 'proof-assistant-table '(narya "Narya" "ny" nil (".nyo")))
+  (unless (fboundp 'narya-mode)
+    (defun narya-mode ()
+      "Load Narya Proof General support and enter `narya-mode'."
+      (interactive)
+      (proof-ready-for-assistant 'narya "Narya")
+      (load-library "narya")
+      (narya-mode))))
+
+(with-eval-after-load 'narya
+  (add-hook 'narya-mode-hook (lambda () (set-input-method "Agda")))
+  (evil-define-key 'normal narya-mode-map
+    "," nil
+    ",f" 'narya-next-hole
+    ",b" 'narya-previous-hole
+    ", " 'narya-solve-hole
+    ",L" 'narya-show-all-holes
+    ",l" 'proof-process-buffer
+    ",," 'narya-show-hole
+    ",A" 'proof-interrupt-process
+    ",R" 'proof-shell-restart
+    ",u" 'proof-undo-last-successful-command
+    ",c" 'narya-split-hole
+    ",g" nil
+    ",gg" 'proof-goto-command-start
+    ",G" 'proof-goto-command-end)
+  (evil-define-key 'normal narya-mode-map
+    (kbd ", <return>") 'proof-script-complete))
+
 ;; NOTE: Make sure to configure a GitHub token before using this package!
 ;; - https://magit.vc/manual/forge/Token-Creation.html#Token-Creation
 ;; - https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started

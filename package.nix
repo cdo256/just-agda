@@ -54,6 +54,7 @@ let
     epkgs.magit
     epkgs.no-littering
     epkgs.projectile
+    epkgs.proof-general
     epkgs.rainbow-delimiters
     epkgs.visual-fill-column
     epkgs.which-key
